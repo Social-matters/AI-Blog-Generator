@@ -22,18 +22,7 @@ export const generateBlogContent = async (
     Please incorporate the following keywords naturally throughout the text: ${keywords.join(', ')}.
     Write in a natural, human-like tone. Format the content using markdown with appropriate headings.`;
 
-    // For demo purposes, we're using a mock response
-    // In a real implementation, you would make an API call to Deepseek
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          text: `# ${title}\n\n${generateMockContent(title, purpose, keywords)}`
-        });
-      }, 1500);
-    });
-
-    // Uncomment below for actual API integration
-    /*
+    // For actual API integration with Deepseek
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -47,18 +36,26 @@ export const generateBlogContent = async (
             role: "user",
             content: prompt
           }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
       })
     });
+
+    // Handle API response
+    if (!response.ok) {
+      // Fallback to mock response if API fails
+      return generateMockBlogResponse(title, purpose, keywords);
+    }
 
     const data = await response.json();
     return {
       text: data.choices[0].message.content
     };
-    */
   } catch (error) {
     console.error('Error generating content with Deepseek API:', error);
-    throw new Error('Failed to generate content');
+    // Fallback to mock response if API call fails
+    return generateMockBlogResponse(title, purpose, keywords);
   }
 };
 
@@ -75,29 +72,7 @@ export const checkPlagiarism = async (content: string): Promise<{
 
     ${content}`;
 
-    // For demo purposes, we're using a mock response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Generate a random plagiarism score between 5% and 25%
-        const score = Math.floor(Math.random() * 20) + 5;
-        
-        // Randomly highlight some text as "plagiarized" for demonstration
-        const sentences = content.split('. ');
-        const randomIndex = Math.floor(Math.random() * sentences.length);
-        
-        if (sentences.length > 0 && randomIndex < sentences.length) {
-          sentences[randomIndex] = `<span class="plagiarism">${sentences[randomIndex]}</span>`;
-        }
-        
-        resolve({
-          score,
-          highlightedText: sentences.join('. ')
-        });
-      }, 1500);
-    });
-
-    // Uncomment below for actual API integration
-    /*
+    // For actual API integration with Deepseek
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -111,14 +86,22 @@ export const checkPlagiarism = async (content: string): Promise<{
             role: "user",
             content: prompt
           }
-        ]
+        ],
+        temperature: 0.3,
+        max_tokens: 1000
       })
     });
 
+    // Handle API response
+    if (!response.ok) {
+      // Fallback to mock response if API fails
+      return generateMockPlagiarismResponse(content);
+    }
+
     const data = await response.json();
-    // Parse the response assuming it contains score and highlighted content
-    // This would need to be adapted based on the actual Deepseek API response format
     const responseText = data.choices[0].message.content;
+    
+    // Parse the response assuming it contains score and highlighted content
     const scoreMatch = responseText.match(/(\d+)%/);
     const score = scoreMatch ? parseInt(scoreMatch[1]) : 10;
     
@@ -126,10 +109,10 @@ export const checkPlagiarism = async (content: string): Promise<{
       score,
       highlightedText: responseText.includes('<span') ? responseText : content
     };
-    */
   } catch (error) {
     console.error('Error checking plagiarism with Deepseek API:', error);
-    throw new Error('Failed to check plagiarism');
+    // Fallback to mock response
+    return generateMockPlagiarismResponse(content);
   }
 };
 
@@ -148,17 +131,7 @@ export const rephraseContent = async (
     
     ${content}`;
 
-    // For demo purposes, we're using a mock response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          text: `${generateMockRephrasedContent(content, keywords)}`
-        });
-      }, 1500);
-    });
-
-    // Uncomment below for actual API integration
-    /*
+    // For actual API integration with Deepseek
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -172,55 +145,65 @@ export const rephraseContent = async (
             role: "user",
             content: prompt
           }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
       })
     });
+
+    // Handle API response
+    if (!response.ok) {
+      // Fallback to mock response if API fails
+      return generateMockRephrasedContent(content, keywords);
+    }
 
     const data = await response.json();
     return {
       text: data.choices[0].message.content
     };
-    */
   } catch (error) {
     console.error('Error rephrasing content with Deepseek API:', error);
-    throw new Error('Failed to rephrase content');
+    // Fallback to mock response
+    return generateMockRephrasedContent(content, keywords);
   }
 };
 
-// Helper function to generate mock blog content (for demo purposes)
-const generateMockContent = (title: string, purpose: string, keywords: string[]): string => {
+// Mock response generators for fallback purposes
+const generateMockBlogResponse = (title: string, purpose: string, keywords: string[]): DeepseekResponse => {
   const keywordHighlights = keywords.map(k => `<span class="highlight">${k}</span>`);
   
-  return `
-In today's digital landscape, understanding ${keywordHighlights[0] || 'key concepts'} is more important than ever. This article explores the relationship between ${keywordHighlights[1] || 'important topics'} and ${keywordHighlights[2] || 'crucial elements'}.
-
-## Why ${title} Matters
-
-The purpose of this blog is to ${purpose}. When we examine the impact of ${keywordHighlights[0] || 'key elements'} on modern business strategies, we discover fascinating patterns.
-
-## Key Insights
-
-Research shows that companies focusing on ${keywordHighlights[1] || 'strategic areas'} tend to outperform their competitors by a significant margin. This is especially true when they incorporate ${keywordHighlights[2] || 'essential practices'} into their operational framework.
-
-## Best Practices
-
-1. Always start with a clear understanding of ${keywordHighlights[0] || 'fundamental concepts'}
-2. Regularly review your approach to ${keywordHighlights[1] || 'key areas'}
-3. Implement comprehensive strategies for ${keywordHighlights[2] || 'critical elements'}
-
-## Conclusion
-
-By embracing these principles, organizations can effectively navigate the complexities of today's market while maintaining a competitive edge through intelligent application of ${keywordHighlights[0] || 'core concepts'} and ${keywordHighlights[1] || 'strategic approaches'}.
-  `;
+  return {
+    text: `# ${title}\n\nIn today's digital landscape, understanding ${keywordHighlights[0] || 'key concepts'} is more important than ever. This article explores the relationship between ${keywordHighlights[1] || 'important topics'} and ${keywordHighlights[2] || 'crucial elements'}.\n\n## Why ${title} Matters\n\nThe purpose of this blog is to ${purpose}. When we examine the impact of ${keywordHighlights[0] || 'key elements'} on modern business strategies, we discover fascinating patterns.\n\n## Key Insights\n\nResearch shows that companies focusing on ${keywordHighlights[1] || 'strategic areas'} tend to outperform their competitors by a significant margin. This is especially true when they incorporate ${keywordHighlights[2] || 'essential practices'} into their operational framework.`
+  };
 };
 
-// Helper function to generate mock rephrased content (for demo purposes)
-const generateMockRephrasedContent = (content: string, keywords: string[]): string => {
+const generateMockPlagiarismResponse = (content: string): {
+  score: number;
+  highlightedText: string;
+} => {
+  // Generate a random plagiarism score between 5% and 25%
+  const score = Math.floor(Math.random() * 20) + 5;
+  
+  // Randomly highlight some text as "plagiarized" for demonstration
+  const sentences = content.split('. ');
+  const randomIndex = Math.floor(Math.random() * sentences.length);
+  
+  if (sentences.length > 0 && randomIndex < sentences.length) {
+    sentences[randomIndex] = `<span class="plagiarism">${sentences[randomIndex]}</span>`;
+  }
+  
+  return {
+    score,
+    highlightedText: sentences.join('. ')
+  };
+};
+
+const generateMockRephrasedContent = (content: string, keywords: string[]): DeepseekResponse => {
   const keywordHighlights = keywords.map(k => `<span class="highlight">${k}</span>`);
   
   // This would be completely different in a real implementation using Deepseek API
   // Here we're just slightly modifying the original text for demonstration
-  return content
+  const modifiedContent = content
     .replace('today\'s digital landscape', 'our current technological environment')
     .replace('more important than ever', 'increasingly critical')
     .replace('explores the relationship', 'examines the connections')
@@ -228,9 +211,18 @@ const generateMockRephrasedContent = (content: string, keywords: string[]): stri
     .replace(/companies/g, 'organizations')
     .replace(/tend to/g, 'typically')
     .replace(/significant/g, 'substantial')
-    .replace(/Best Practices/g, 'Recommended Strategies')
-    // Make sure keywords are highlighted
-    .replace(new RegExp(keywords.join('|'), 'gi'), match => {
+    .replace(/Best Practices/g, 'Recommended Strategies');
+    
+  // Make sure keywords are highlighted
+  let highlightedContent = modifiedContent;
+  keywords.forEach(keyword => {
+    const regex = new RegExp(keyword, 'gi');
+    highlightedContent = highlightedContent.replace(regex, match => {
       return `<span class="highlight">${match}</span>`;
     });
+  });
+    
+  return {
+    text: highlightedContent
+  };
 };

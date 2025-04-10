@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,7 +25,6 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
   const [content, setContent] = useState(initialContent);
   
   useEffect(() => {
-    // Update content when initialContent changes
     if (initialContent) {
       setContent(initialContent);
     }
@@ -61,7 +59,6 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
 
   const handleCopyContent = async () => {
     try {
-      // Create a temporary element to remove HTML tags
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = highlightedContent || content;
       const textContent = tempDiv.textContent || tempDiv.innerText || '';
@@ -70,7 +67,6 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
       setIsCopied(true);
       toast.success('Content copied to clipboard');
       
-      // Reset the copied state after 2 seconds
       setTimeout(() => {
         setIsCopied(false);
       }, 2000);
@@ -85,6 +81,11 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
     if (plagiarismScore > 20) return 'bg-red-500';
     if (plagiarismScore > 10) return 'bg-yellow-500';
     return 'bg-green-500';
+  };
+
+  const stripHtml = (html: string): string => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
   };
 
   return (
@@ -134,10 +135,9 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
           />
           
           {highlightedContent && (
-            <div 
-              className="border rounded-md p-4 min-h-[200px] max-h-[300px] overflow-y-auto prose prose-sm"
-              dangerouslySetInnerHTML={{ __html: highlightedContent }}
-            />
+            <div className="border rounded-md p-4 min-h-[200px] max-h-[300px] overflow-y-auto font-mono text-sm whitespace-pre-wrap">
+              <div dangerouslySetInnerHTML={{ __html: highlightedContent }} />
+            </div>
           )}
         </div>
 
@@ -179,7 +179,7 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
 
           <Button 
             onClick={() => onRephrase(highlightedContent || content)}
-            className="bg-gradient-to-r from-yellow-400 to-black hover:from-yellow-500 hover:to-gray-800"
+            className="bg-yellow-600 hover:bg-yellow-700 text-white"
             disabled={isChecking || !content}
           >
             <RefreshCw className="mr-2" size={16} />

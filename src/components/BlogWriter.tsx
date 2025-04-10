@@ -133,7 +133,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
         <Button 
           onClick={handleGenerateContent} 
           disabled={isGenerating}
-          className="w-full bg-gradient-to-r from-yellow-400 to-black hover:from-yellow-500 hover:to-gray-800"
+          className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
         >
           {isGenerating ? (
             <>
@@ -176,7 +176,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
             />
 
             <Button 
-              className="mt-4 w-full flex items-center justify-center bg-gradient-to-r from-yellow-400 to-black hover:from-yellow-500 hover:to-gray-800"
+              className="mt-4 w-full flex items-center justify-center bg-yellow-600 hover:bg-yellow-700 text-white"
               onClick={handleNext}
               disabled={!isGenerated}
             >

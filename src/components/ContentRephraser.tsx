@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,7 +33,6 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
 
   useEffect(() => {
     if (content && !rephrasedContent) {
-      // Automatically start rephrasing when content is received and no rephrased content exists
       handleRephrase();
     }
   }, [content]);
@@ -65,7 +63,6 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
     }
     
     try {
-      // Create a temporary element to remove HTML tags
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = rephrasedContent;
       const textContent = tempDiv.textContent || tempDiv.innerText || '';
@@ -74,7 +71,6 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
       setIsCopied(true);
       toast.success('Content copied to clipboard');
       
-      // Reset the copied state after 2 seconds
       setTimeout(() => {
         setIsCopied(false);
       }, 2000);
@@ -82,6 +78,19 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
       console.error('Error copying content:', error);
       toast.error('Failed to copy content');
     }
+  };
+
+  const stripHtml = (html: string): string => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  };
+
+  const highlightKeywords = (text: string, keywords: string[]): React.ReactNode => {
+    if (!text) return null;
+    
+    const plainText = text.includes('<') ? stripHtml(text) : text;
+    
+    return plainText;
   };
 
   return (
@@ -167,10 +176,13 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
               </div>
             </div>
           ) : (
-            <div 
-              className="border rounded-md p-4 min-h-[300px] max-h-[400px] overflow-y-auto prose prose-sm"
-              dangerouslySetInnerHTML={{ __html: rephrasedContent || 'Content will appear here after rephrasing...' }}
-            />
+            <div className="border rounded-md p-4 min-h-[300px] max-h-[400px] overflow-y-auto font-mono text-sm whitespace-pre-wrap">
+              {rephrasedContent ? (
+                <div dangerouslySetInnerHTML={{ __html: rephrasedContent }} />
+              ) : (
+                <p className="text-gray-500">Content will appear here after rephrasing...</p>
+              )}
+            </div>
           )}
         </div>
 
@@ -187,7 +199,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
 
           <Button 
             onClick={() => onCheckPlagiarism(rephrasedContent)}
-            className="bg-gradient-to-r from-yellow-400 to-black hover:from-yellow-500 hover:to-gray-800"
+            className="bg-yellow-600 hover:bg-yellow-700 text-white"
             disabled={!rephrasedContent || isRephrasing}
           >
             <AlertCircle className="mr-2" size={16} />

@@ -30,9 +30,9 @@ const Index = () => {
     <div className="container mx-auto py-8 px-4">
       <div className="text-center mb-8">
         <img 
-          src="/lovable-uploads/6d6231d4-23ad-4d24-a495-15d14e732620.png" 
+          src="/lovable-uploads/221760c7-1e06-4918-b816-09c4dc23e5c0.png" 
           alt="Social Matters Logo" 
-          className="h-12 mx-auto" // Reduced logo size from h-16 to h-12
+          className="h-12 mx-auto" // Keep logo size modest
         />
         <p className="text-muted-foreground">Write SEO-optimized content, check plagiarism, and rephrase with ease</p>
       </div>
@@ -42,21 +42,21 @@ const Index = () => {
           <TabsTrigger 
             value="write" 
             onClick={() => setActiveSection('write')}
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-400 data-[state=active]:to-black data-[state=active]:text-white"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white"
           >
             Write
           </TabsTrigger>
           <TabsTrigger 
             value="check" 
             onClick={() => setActiveSection('check')}
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-400 data-[state=active]:to-black data-[state=active]:text-white"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white"
           >
             Check Plagiarism
           </TabsTrigger>
           <TabsTrigger 
             value="rephrase" 
             onClick={() => setActiveSection('rephrase')}
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-400 data-[state=active]:to-black data-[state=active]:text-white"
+            className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white"
           >
             Rephrase
           </TabsTrigger>
