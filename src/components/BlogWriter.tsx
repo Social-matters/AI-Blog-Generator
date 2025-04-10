@@ -133,7 +133,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
         <Button 
           onClick={handleGenerateContent} 
           disabled={isGenerating}
-          className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
+          className="w-full bg-black hover:bg-black/80 text-white"
         >
           {isGenerating ? (
             <>
@@ -155,7 +155,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
                 variant="outline"
                 size="sm"
                 onClick={handleCopyContent}
-                className="flex items-center"
+                className="flex items-center bg-black text-white hover:bg-black/80"
               >
                 {isCopied ? (
                   <>
@@ -176,7 +176,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
             />
 
             <Button 
-              className="mt-4 w-full flex items-center justify-center bg-yellow-600 hover:bg-yellow-700 text-white"
+              className="mt-4 w-full flex items-center justify-center bg-black hover:bg-black/80 text-white"
               onClick={handleNext}
               disabled={!isGenerated}
             >
