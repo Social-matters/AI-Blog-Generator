@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft, AlertCircle, Loader2, RefreshCw, Copy, CheckCheck } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { checkPlagiarism } from '@/services/deepseek';
 
@@ -14,7 +15,7 @@ interface PlagiarismCheckerProps {
 }
 
 const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({ 
-  content, 
+  content: initialContent, 
   onBack, 
   onRephrase 
 }) => {
@@ -22,14 +23,14 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
   const [plagiarismScore, setPlagiarismScore] = useState<number | null>(null);
   const [highlightedContent, setHighlightedContent] = useState<string>('');
   const [isCopied, setIsCopied] = useState(false);
+  const [content, setContent] = useState(initialContent);
   
   useEffect(() => {
-    if (content) {
-      // Reset the state when content changes
-      setPlagiarismScore(null);
-      setHighlightedContent('');
+    // Update content when initialContent changes
+    if (initialContent) {
+      setContent(initialContent);
     }
-  }, [content]);
+  }, [initialContent]);
 
   const handleCheck = async () => {
     if (!content) {
@@ -125,10 +126,19 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
             </div>
           </div>
           
-          <div 
-            className="border rounded-md p-4 min-h-[300px] max-h-[400px] overflow-y-auto prose prose-sm"
-            dangerouslySetInnerHTML={{ __html: highlightedContent || content }}
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Paste or type content here to check for plagiarism"
+            className="min-h-[300px] mb-4"
           />
+          
+          {highlightedContent && (
+            <div 
+              className="border rounded-md p-4 min-h-[200px] max-h-[300px] overflow-y-auto prose prose-sm"
+              dangerouslySetInnerHTML={{ __html: highlightedContent }}
+            />
+          )}
         </div>
 
         {plagiarismScore !== null && (
@@ -169,8 +179,8 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
 
           <Button 
             onClick={() => onRephrase(highlightedContent || content)}
-            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-            disabled={isChecking}
+            className="bg-gradient-to-r from-yellow-400 to-black hover:from-yellow-500 hover:to-gray-800"
+            disabled={isChecking || !content}
           >
             <RefreshCw className="mr-2" size={16} />
             Rephrase Content

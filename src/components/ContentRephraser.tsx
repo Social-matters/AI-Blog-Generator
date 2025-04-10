@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, RefreshCw, Loader2, AlertCircle, Copy, CheckCheck } from 'lucide-react';
 import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
 import KeywordTag from './KeywordTag';
 import { rephraseContent } from '@/services/deepseek';
 
@@ -15,18 +16,25 @@ interface ContentRephraserProps {
 }
 
 const ContentRephraser: React.FC<ContentRephraserProps> = ({ 
-  content, 
+  content: initialContent, 
   keywords, 
   onBack, 
   onCheckPlagiarism 
 }) => {
   const [isRephrasing, setIsRephrasing] = useState(false);
+  const [content, setContent] = useState(initialContent);
   const [rephrasedContent, setRephrasedContent] = useState('');
   const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
-    if (content) {
-      // Automatically start rephrasing when content is received
+    if (initialContent) {
+      setContent(initialContent);
+    }
+  }, [initialContent]);
+
+  useEffect(() => {
+    if (content && !rephrasedContent) {
+      // Automatically start rephrasing when content is received and no rephrased content exists
       handleRephrase();
     }
   }, [content]);
@@ -98,6 +106,18 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
 
         <div>
           <div className="flex justify-between items-center mb-2">
+            <label className="block text-sm font-medium">Original Content</label>
+          </div>
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Paste or type content here to rephrase"
+            className="min-h-[200px] mb-4"
+          />
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-medium">Rephrased Content</label>
             <div className="flex space-x-2">
               <Button 
@@ -122,7 +142,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
                 onClick={handleRephrase} 
                 variant="outline" 
                 size="sm"
-                disabled={isRephrasing}
+                disabled={isRephrasing || !content}
               >
                 {isRephrasing ? (
                   <>
@@ -132,7 +152,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
                 ) : (
                   <>
                     <RefreshCw className="mr-2" size={14} />
-                    Rephrase Again
+                    Rephrase
                   </>
                 )}
               </Button>
@@ -142,7 +162,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
           {isRephrasing ? (
             <div className="border rounded-md p-4 h-[300px] flex items-center justify-center">
               <div className="text-center">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-blue-500" />
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-yellow-500" />
                 <p className="text-sm text-gray-500">Rephrasing your content while preserving keywords...</p>
               </div>
             </div>
@@ -167,7 +187,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
 
           <Button 
             onClick={() => onCheckPlagiarism(rephrasedContent)}
-            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            className="bg-gradient-to-r from-yellow-400 to-black hover:from-yellow-500 hover:to-gray-800"
             disabled={!rephrasedContent || isRephrasing}
           >
             <AlertCircle className="mr-2" size={16} />

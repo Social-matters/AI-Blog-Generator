@@ -32,7 +32,7 @@ const Index = () => {
         <img 
           src="/lovable-uploads/6d6231d4-23ad-4d24-a495-15d14e732620.png" 
           alt="Social Matters Logo" 
-          className="h-16 mx-auto"
+          className="h-12 mx-auto" // Reduced logo size from h-16 to h-12
         />
         <p className="text-muted-foreground">Write SEO-optimized content, check plagiarism, and rephrase with ease</p>
       </div>
@@ -42,23 +42,21 @@ const Index = () => {
           <TabsTrigger 
             value="write" 
             onClick={() => setActiveSection('write')}
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-400 data-[state=active]:to-black data-[state=active]:text-white"
           >
             Write
           </TabsTrigger>
           <TabsTrigger 
             value="check" 
-            onClick={() => blogContent && setActiveSection('check')}
-            disabled={!blogContent}
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white"
+            onClick={() => setActiveSection('check')}
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-400 data-[state=active]:to-black data-[state=active]:text-white"
           >
-            Check
+            Check Plagiarism
           </TabsTrigger>
           <TabsTrigger 
             value="rephrase" 
-            onClick={() => rephrasedContent && setActiveSection('rephrase')}
-            disabled={!rephrasedContent}
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white"
+            onClick={() => setActiveSection('rephrase')}
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-400 data-[state=active]:to-black data-[state=active]:text-white"
           >
             Rephrase
           </TabsTrigger>
