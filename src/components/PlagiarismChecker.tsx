@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ArrowLeft, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import { ArrowRight, ArrowLeft, AlertCircle, Loader2, RefreshCw, Copy, CheckCheck } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { checkPlagiarism } from '@/services/openai';
+import { checkPlagiarism } from '@/services/deepseek';
 
 interface PlagiarismCheckerProps {
   content: string;
@@ -21,6 +21,7 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
   const [isChecking, setIsChecking] = useState(false);
   const [plagiarismScore, setPlagiarismScore] = useState<number | null>(null);
   const [highlightedContent, setHighlightedContent] = useState<string>('');
+  const [isCopied, setIsCopied] = useState(false);
   
   useEffect(() => {
     if (content) {
@@ -57,6 +58,27 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
     }
   };
 
+  const handleCopyContent = async () => {
+    try {
+      // Create a temporary element to remove HTML tags
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = highlightedContent || content;
+      const textContent = tempDiv.textContent || tempDiv.innerText || '';
+      
+      await navigator.clipboard.writeText(textContent);
+      setIsCopied(true);
+      toast.success('Content copied to clipboard');
+      
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Error copying content:', error);
+      toast.error('Failed to copy content');
+    }
+  };
+
   const getScoreColor = () => {
     if (!plagiarismScore) return 'bg-gray-300';
     if (plagiarismScore > 20) return 'bg-red-500';
@@ -76,16 +98,31 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-medium">Content Analysis</label>
-            <Button onClick={handleCheck} variant="outline" size="sm" disabled={isChecking}>
-              {isChecking ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Checking...
-                </>
-              ) : (
-                'Check Plagiarism'
-              )}
-            </Button>
+            <div className="flex space-x-2">
+              <Button onClick={handleCopyContent} variant="outline" size="sm">
+                {isCopied ? (
+                  <>
+                    <CheckCheck className="mr-2 h-4 w-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy
+                  </>
+                )}
+              </Button>
+              <Button onClick={handleCheck} variant="outline" size="sm" disabled={isChecking}>
+                {isChecking ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Checking...
+                  </>
+                ) : (
+                  'Check Plagiarism'
+                )}
+              </Button>
+            </div>
           </div>
           
           <div 

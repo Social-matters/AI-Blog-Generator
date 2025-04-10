@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { ArrowRight, FileText, Loader2 } from 'lucide-react';
+import { ArrowRight, FileText, Loader2, Copy, CheckCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import SEOKeywordInput from './SEOKeywordInput';
-import { generateBlogContent } from '@/services/openai';
+import { generateBlogContent } from '@/services/deepseek';
 
 interface BlogWriterProps {
   onNext: (content: string) => void;
@@ -21,6 +21,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
   const [content, setContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleGenerateContent = async () => {
     if (!title.trim()) {
@@ -60,6 +61,32 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
       return;
     }
     onNext(content);
+  };
+
+  const handleCopyContent = async () => {
+    if (!content) {
+      toast.error('No content to copy');
+      return;
+    }
+    
+    try {
+      // Create a temporary element to remove HTML tags
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = content;
+      const textContent = tempDiv.textContent || tempDiv.innerText || '';
+      
+      await navigator.clipboard.writeText(textContent);
+      setIsCopied(true);
+      toast.success('Content copied to clipboard');
+      
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Error copying content:', error);
+      toast.error('Failed to copy content');
+    }
   };
 
   return (
@@ -120,9 +147,29 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
 
         {content && (
           <div>
-            <label htmlFor="content" className="block text-sm font-medium mb-1">
-              Generated Content
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label htmlFor="content" className="block text-sm font-medium">
+                Generated Content
+              </label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyContent}
+                className="flex items-center"
+              >
+                {isCopied ? (
+                  <>
+                    <CheckCheck className="mr-2 h-4 w-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy Content
+                  </>
+                )}
+              </Button>
+            </div>
             <div 
               className="border rounded-md p-4 min-h-[200px] max-h-[400px] overflow-y-auto prose prose-sm"
               dangerouslySetInnerHTML={{ __html: content }}

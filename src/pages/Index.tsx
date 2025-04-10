@@ -29,7 +29,11 @@ const Index = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Rephrase & Ascend</h1>
+        <img 
+          src="/lovable-uploads/6d6231d4-23ad-4d24-a495-15d14e732620.png" 
+          alt="Social Matters Logo" 
+          className="h-16 mx-auto"
+        />
         <p className="text-muted-foreground">Write SEO-optimized content, check plagiarism, and rephrase with ease</p>
       </div>
       

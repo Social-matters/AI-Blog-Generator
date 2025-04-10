@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Loader2, AlertCircle, Copy, CheckCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import KeywordTag from './KeywordTag';
-import { rephraseContent } from '@/services/openai';
+import { rephraseContent } from '@/services/deepseek';
 
 interface ContentRephraserProps {
   content: string;
@@ -22,6 +22,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
 }) => {
   const [isRephrasing, setIsRephrasing] = useState(false);
   const [rephrasedContent, setRephrasedContent] = useState('');
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (content) {
@@ -49,6 +50,32 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
     }
   };
 
+  const handleCopyContent = async () => {
+    if (!rephrasedContent) {
+      toast.error('No content to copy');
+      return;
+    }
+    
+    try {
+      // Create a temporary element to remove HTML tags
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = rephrasedContent;
+      const textContent = tempDiv.textContent || tempDiv.innerText || '';
+      
+      await navigator.clipboard.writeText(textContent);
+      setIsCopied(true);
+      toast.success('Content copied to clipboard');
+      
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Error copying content:', error);
+      toast.error('Failed to copy content');
+    }
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -72,24 +99,44 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-medium">Rephrased Content</label>
-            <Button 
-              onClick={handleRephrase} 
-              variant="outline" 
-              size="sm"
-              disabled={isRephrasing}
-            >
-              {isRephrasing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Rephrasing...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="mr-2" size={14} />
-                  Rephrase Again
-                </>
-              )}
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                onClick={handleCopyContent} 
+                variant="outline" 
+                size="sm"
+                disabled={isRephrasing || !rephrasedContent}
+              >
+                {isCopied ? (
+                  <>
+                    <CheckCheck className="mr-2 h-4 w-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy
+                  </>
+                )}
+              </Button>
+              <Button 
+                onClick={handleRephrase} 
+                variant="outline" 
+                size="sm"
+                disabled={isRephrasing}
+              >
+                {isRephrasing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Rephrasing...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="mr-2" size={14} />
+                    Rephrase Again
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
           
           {isRephrasing ? (
