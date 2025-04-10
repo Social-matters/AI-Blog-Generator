@@ -1,6 +1,9 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -97,5 +100,42 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
   }
+}
+
+.section-transition {
+  transition: all 0.5s ease;
+}
+
+.section-enter {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.section-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.section-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.section-exit-active {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.highlight {
+  background-color: rgba(246, 139, 92, 0.2);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.plagiarism {
+  background-color: rgba(239, 68, 68, 0.2);
+  border-radius: 2px;
+  padding: 0 2px;
 }
