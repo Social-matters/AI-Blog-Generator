@@ -44,7 +44,7 @@ const BlogWriter: React.FC<BlogWriterProps> = ({ onNext, setKeywords }) => {
       const result = await generateBlogContent(title, purpose, keywordList);
       setContent(result.text);
       setIsGenerated(true);
-      toast.success('Blog content generated successfully');
+      toast.success('Blog content generated successfully with Gemini AI');
       // Save keywords for later use in other components
       setKeywords(keywordList);
     } catch (error) {

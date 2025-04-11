@@ -1,61 +1,59 @@
+// AI service for content generation and plagiarism checking using Gemini API
 
-// DeepseekAPI service for content generation and plagiarism checking
-
-export interface DeepseekResponse {
+export interface AIResponse {
   text: string;
 }
 
-const API_KEY = 'sk-61bc4c084a14404f9c729c18b0b82632';
-const BACKUP_API_KEY = 'AIzaSyCOOR1YfivpNwf8hS9V6qv5aFkRWXfPVtg';
+const GEMINI_API_KEY = 'AIzaSyCOOR1YfivpNwf8hS9V6qv5aFkRWXfPVtg';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
 // Function to generate blog content
 export const generateBlogContent = async (
   title: string, 
   purpose: string, 
   keywords: string[]
-): Promise<DeepseekResponse> => {
-  console.log('Generating blog content with Deepseek API:', { title, purpose, keywords });
+): Promise<AIResponse> => {
+  console.log('Generating blog content with Gemini API:', { title, purpose, keywords });
   
   try {
-    // In a production environment, this would be a server-side call to protect your API key
     const prompt = `Write a blog post with the title: "${title}". 
     The purpose of this blog is to ${purpose}. 
     Please incorporate the following keywords naturally throughout the text: ${keywords.join(', ')}.
     Write in a natural, human-like tone. Format the content using markdown with appropriate headings.`;
 
-    // For actual API integration with Deepseek
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
+        contents: [
           {
-            role: "user",
-            content: prompt
+            parts: [
+              {
+                text: prompt
+              }
+            ]
           }
         ],
-        temperature: 0.7,
-        max_tokens: 1000
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1000
+        }
       })
     });
 
-    // Handle API response
     if (!response.ok) {
-      // Fallback to mock response if API fails
+      console.error('Error from Gemini API:', await response.text());
       return generateMockBlogResponse(title, purpose, keywords);
     }
 
     const data = await response.json();
     return {
-      text: data.choices[0].message.content
+      text: data.candidates[0].content.parts[0].text
     };
   } catch (error) {
-    console.error('Error generating content with Deepseek API:', error);
-    // Fallback to mock response if API call fails
+    console.error('Error generating content with Gemini API:', error);
     return generateMockBlogResponse(title, purpose, keywords);
   }
 };
@@ -65,42 +63,42 @@ export const checkPlagiarism = async (content: string): Promise<{
   score: number;
   highlightedText: string;
 }> => {
-  console.log('Checking plagiarism with Deepseek API');
+  console.log('Checking plagiarism with Gemini API');
   
   try {
-    // In a production environment, this would be a server-side call to protect your API key
     const prompt = `Analyze the following content for plagiarism. Provide a plagiarism percentage score and highlight any potentially plagiarized parts with <span class="plagiarism">plagiarized text</span>:
 
     ${content}`;
 
-    // For actual API integration with Deepseek
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
+        contents: [
           {
-            role: "user",
-            content: prompt
+            parts: [
+              {
+                text: prompt
+              }
+            ]
           }
         ],
-        temperature: 0.3,
-        max_tokens: 1000
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 1000
+        }
       })
     });
 
-    // Handle API response
     if (!response.ok) {
-      // Fallback to mock response if API fails
+      console.error('Error from Gemini API:', await response.text());
       return generateMockPlagiarismResponse(content);
     }
 
     const data = await response.json();
-    const responseText = data.choices[0].message.content;
+    const responseText = data.candidates[0].content.parts[0].text;
     
     // Parse the response assuming it contains score and highlighted content
     const scoreMatch = responseText.match(/(\d+)%/);
@@ -111,8 +109,7 @@ export const checkPlagiarism = async (content: string): Promise<{
       highlightedText: responseText.includes('<span') ? responseText : content
     };
   } catch (error) {
-    console.error('Error checking plagiarism with Deepseek API:', error);
-    // Fallback to mock response
+    console.error('Error checking plagiarism with Gemini API:', error);
     return generateMockPlagiarismResponse(content);
   }
 };
@@ -121,56 +118,55 @@ export const checkPlagiarism = async (content: string): Promise<{
 export const rephraseContent = async (
   content: string, 
   keywords: string[]
-): Promise<DeepseekResponse> => {
-  console.log('Rephrasing content with Deepseek API, keywords:', keywords);
+): Promise<AIResponse> => {
+  console.log('Rephrasing content with Gemini API, keywords:', keywords);
   
   try {
-    // In a production environment, this would be a server-side call to protect your API key
     const prompt = `Rephrase the following content while preserving the meaning and ensuring 
     all of these keywords are maintained: ${keywords.join(', ')}. 
     Make sure the rephrased content has a natural, human-like tone:
     
     ${content}`;
 
-    // For actual API integration with Deepseek
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
+        contents: [
           {
-            role: "user",
-            content: prompt
+            parts: [
+              {
+                text: prompt
+              }
+            ]
           }
         ],
-        temperature: 0.7,
-        max_tokens: 1000
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1000
+        }
       })
     });
 
-    // Handle API response
     if (!response.ok) {
-      // Fallback to mock response if API fails
+      console.error('Error from Gemini API:', await response.text());
       return generateMockRephrasedContent(content, keywords);
     }
 
     const data = await response.json();
     return {
-      text: data.choices[0].message.content
+      text: data.candidates[0].content.parts[0].text
     };
   } catch (error) {
-    console.error('Error rephrasing content with Deepseek API:', error);
-    // Fallback to mock response
+    console.error('Error rephrasing content with Gemini API:', error);
     return generateMockRephrasedContent(content, keywords);
   }
 };
 
 // Mock response generators for fallback purposes
-const generateMockBlogResponse = (title: string, purpose: string, keywords: string[]): DeepseekResponse => {
+const generateMockBlogResponse = (title: string, purpose: string, keywords: string[]): AIResponse => {
   const keywordHighlights = keywords.map(k => `<span class="highlight">${k}</span>`);
   
   return {
@@ -199,7 +195,7 @@ const generateMockPlagiarismResponse = (content: string): {
   };
 };
 
-const generateMockRephrasedContent = (content: string, keywords: string[]): DeepseekResponse => {
+const generateMockRephrasedContent = (content: string, keywords: string[]): AIResponse => {
   const keywordHighlights = keywords.map(k => `<span class="highlight">${k}</span>`);
   
   // This would be completely different in a real implementation using Deepseek API
