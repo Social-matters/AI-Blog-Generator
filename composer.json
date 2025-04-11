@@ -1,0 +1,14 @@
+
+{
+    "name": "gemini-ai-blog-generator",
+    "description": "AI-powered blog content generator using Gemini AI",
+    "type": "project",
+    "require": {
+        "php": ">=7.4"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "# This is where you can add post-installation commands if needed"
+        ]
+    }
+}
