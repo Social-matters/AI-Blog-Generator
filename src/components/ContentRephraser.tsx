@@ -155,7 +155,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
                 variant="outline" 
                 size="sm"
                 disabled={isRephrasing || (!rephrasedContent && !editedContent)}
-                className="bg-black text-white hover:bg-black/80"
+                className="bg-black text-white hover:bg-black/80 hover:text-white"
               >
                 {isCopied ? (
                   <>
@@ -174,7 +174,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
                   onClick={handleToggleEdit} 
                   variant="outline" 
                   size="sm"
-                  className="bg-black text-white hover:bg-black/80"
+                  className="bg-black text-white hover:bg-black/80 hover:text-white"
                 >
                   <Edit className="mr-2 h-4 w-4" />
                   {isEditing ? 'View Result' : 'Edit'}
@@ -185,7 +185,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
                 variant="outline" 
                 size="sm"
                 disabled={isRephrasing || !content}
-                className="bg-black text-white hover:bg-black/80"
+                className="bg-black text-white hover:bg-black/80 hover:text-white"
               >
                 {isRephrasing ? (
                   <>
@@ -243,7 +243,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
           <div className="flex space-x-2">
             <Button 
               onClick={handleRephraseAgain}
-              className="bg-black hover:bg-black/80 text-white"
+              className="bg-black hover:bg-black/80 hover:text-white text-white"
               disabled={!rephrasedContent || isRephrasing}
             >
               <RefreshCw className="mr-2" size={16} />
@@ -252,7 +252,7 @@ const ContentRephraser: React.FC<ContentRephraserProps> = ({
             
             <Button 
               onClick={() => onCheckPlagiarism(isEditing ? editedContent : stripHtml(rephrasedContent))}
-              className="bg-black hover:bg-black/80 text-white"
+              className="bg-black hover:bg-black/80 hover:text-white text-white"
               disabled={!rephrasedContent || isRephrasing}
             >
               <AlertCircle className="mr-2" size={16} />

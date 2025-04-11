@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ArrowLeft, AlertCircle, Loader2, RefreshCw, Copy, CheckCheck, Edit } from 'lucide-react';
+import { ArrowRight, ArrowLeft, AlertCircle, Loader2, RefreshCw, Copy, CheckCheck } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
@@ -25,7 +25,6 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
   const [isCopied, setIsCopied] = useState(false);
   const [content, setContent] = useState(initialContent);
   const [editedContent, setEditedContent] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
   
   useEffect(() => {
     if (initialContent) {
@@ -78,7 +77,7 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
 
   const handleCopyContent = async () => {
     try {
-      await navigator.clipboard.writeText(isEditing ? editedContent : stripHtml(highlightedContent || content));
+      await navigator.clipboard.writeText(editedContent || stripHtml(highlightedContent || content));
       setIsCopied(true);
       toast.success('Content copied to clipboard');
       
@@ -89,10 +88,6 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
       console.error('Error copying content:', error);
       toast.error('Failed to copy content');
     }
-  };
-
-  const handleToggleEdit = () => {
-    setIsEditing(!isEditing);
   };
 
   const getScoreColor = () => {
@@ -115,7 +110,12 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
           <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-medium">Content Analysis</label>
             <div className="flex space-x-2">
-              <Button onClick={handleCopyContent} variant="outline" size="sm" className="bg-black text-white hover:bg-black/80">
+              <Button 
+                onClick={handleCopyContent} 
+                variant="outline" 
+                size="sm" 
+                className="bg-black text-white hover:bg-black/80 hover:text-white"
+              >
                 {isCopied ? (
                   <>
                     <CheckCheck className="mr-2 h-4 w-4" />
@@ -128,7 +128,13 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
                   </>
                 )}
               </Button>
-              <Button onClick={handleCheck} variant="outline" size="sm" disabled={isChecking} className="bg-black text-white hover:bg-black/80">
+              <Button 
+                onClick={handleCheck} 
+                variant="outline" 
+                size="sm" 
+                disabled={isChecking} 
+                className="bg-black text-white hover:bg-black/80 hover:text-white"
+              >
                 {isChecking ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -138,12 +144,6 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
                   'Check Plagiarism'
                 )}
               </Button>
-              {(highlightedContent || content) && (
-                <Button onClick={handleToggleEdit} variant="outline" size="sm" className="bg-black text-white hover:bg-black/80">
-                  <Edit className="mr-2 h-4 w-4" />
-                  {isEditing ? 'View Result' : 'Edit'}
-                </Button>
-              )}
             </div>
           </div>
           
@@ -155,18 +155,12 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
           />
           
           {(highlightedContent || editedContent) && (
-            isEditing ? (
-              <Textarea
-                value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
-                placeholder="Edit content here..."
-                className="min-h-[200px] mb-4 font-mono text-sm"
-              />
-            ) : (
-              <div className="border rounded-md p-4 min-h-[200px] max-h-[300px] overflow-y-auto font-mono text-sm whitespace-pre-wrap">
-                {stripHtml(highlightedContent || content)}
-              </div>
-            )
+            <Textarea
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+              placeholder="Edit content here..."
+              className="min-h-[200px] mb-4 font-mono text-sm"
+            />
           )}
         </div>
 
@@ -207,7 +201,7 @@ const PlagiarismChecker: React.FC<PlagiarismCheckerProps> = ({
           </Button>
 
           <Button 
-            onClick={() => onRephrase(isEditing ? editedContent : stripHtml(highlightedContent || content))}
+            onClick={() => onRephrase(editedContent || stripHtml(highlightedContent || content))}
             className="bg-black hover:bg-black/80 text-white"
             disabled={isChecking || !content}
           >

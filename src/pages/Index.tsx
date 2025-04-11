@@ -30,9 +30,9 @@ const Index = () => {
     <div className="container mx-auto py-8 px-4">
       <div className="text-center mb-8">
         <img 
-          src="/lovable-uploads/6d6231d4-23ad-4d24-a495-15d14e732620.png" 
+          src="/lovable-uploads/c17f7c8f-bce6-483f-90e4-cb7a0e795ab2.png" 
           alt="Social Matters Logo" 
-          className="h-12 mx-auto" 
+          className="h-16 mx-auto" 
         />
         <p className="text-muted-foreground">Write SEO-optimized content, check plagiarism, and rephrase with ease</p>
       </div>
