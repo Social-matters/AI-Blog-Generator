@@ -5,7 +5,8 @@ export interface DeepseekResponse {
   text: string;
 }
 
-const API_KEY = '61bc4c084a14404f9c729c18b0b82632';
+const API_KEY = 'sk-61bc4c084a14404f9c729c18b0b82632';
+const BACKUP_API_KEY = 'AIzaSyCOOR1YfivpNwf8hS9V6qv5aFkRWXfPVtg';
 
 // Function to generate blog content
 export const generateBlogContent = async (
