@@ -1,3 +1,4 @@
+
 // AI service for content generation and plagiarism checking using Gemini API
 
 export interface AIResponse {
@@ -5,7 +6,8 @@ export interface AIResponse {
 }
 
 const GEMINI_API_KEY = 'AIzaSyCOOR1YfivpNwf8hS9V6qv5aFkRWXfPVtg';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+// Updated API URL to use the correct version and endpoint
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent';
 
 // Function to generate blog content
 export const generateBlogContent = async (
@@ -44,11 +46,15 @@ export const generateBlogContent = async (
     });
 
     if (!response.ok) {
-      console.error('Error from Gemini API:', await response.text());
-      return generateMockBlogResponse(title, purpose, keywords);
+      const errorText = await response.text();
+      console.error('Error from Gemini API:', errorText);
+      throw new Error(`Gemini API error: ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('Gemini API response:', data);
+    
+    // Updated response parsing to match Gemini API response structure
     return {
       text: data.candidates[0].content.parts[0].text
     };
